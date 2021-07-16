@@ -2,11 +2,11 @@ package com.example.retrofitexample.posts
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +15,9 @@ import com.example.retrofitexample.data.Post
 import com.example.retrofitexample.databinding.FragmentPostsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
+
+const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class PostsFragment : Fragment(), PostItemClickListener {
@@ -41,18 +42,18 @@ class PostsFragment : Fragment(), PostItemClickListener {
         }
         viewModel.responseLiveData.observe(viewLifecycleOwner, Observer {
 
-             val response = try{
+            val response = try {
                 it
-            } catch (e:IOException) {
+            } catch (e: IOException) {
                 Log.e("PostsFragment", "onCreateView: Caught an IO Exception")
                 binding.progressBar.isVisible = false
                 return@Observer
-            } catch (e:HttpException){
+            } catch (e: HttpException) {
                 Log.e("PostsFragment", "onCreateView: Caught Https Exception")
                 binding.progressBar.isVisible = false
                 return@Observer
             }
-            if (response.isSuccessful && response.body()!=null){
+            if (response.isSuccessful && response.body() != null) {
                 adapter.submitList(response.body())
             } else {
                 Log.e("PostsFragment", "Response not successful")
@@ -62,6 +63,41 @@ class PostsFragment : Fragment(), PostItemClickListener {
 
         binding.recyclerViewPosts.adapter = adapter
         binding.recyclerViewPosts.hasFixedSize()
+
+
+        viewModel.pushPost2(
+
+            body = "Zello There",
+            userId = 1022321,
+            title = "Zello",
+            id = 15
+
+        )
+
+        viewModel.pushPostLiveData2.observe(viewLifecycleOwner, Observer {
+            val response = try {
+                it
+            } catch (e: IOException) {
+                Log.e(TAG, "onCreateView: IOException")
+                return@Observer
+            } catch (e: HttpException) {
+                Log.e(TAG, "onCreateView: HttpException")
+                return@Observer
+            }
+
+            if (response.isSuccessful) {
+                Log.e(TAG, response.body()?.id.toString())
+                Log.e(TAG, response.body()?.userId.toString())
+                Log.e(TAG, response.body()?.title.toString())
+                Log.e(TAG, response.body()?.body.toString())
+                Log.e(TAG, response.code().toString())
+                Log.e(TAG, "Message: ${response.message().toString()}")
+            }
+
+
+        })
+
+
         return binding.root
     }
 

@@ -14,7 +14,19 @@ import javax.inject.Inject
 class PostsViewModel @Inject constructor(val repository: PlaceHolderRepository): ViewModel() {
 
     var responseLiveData = MutableLiveData<Response<List<Post>>>()
+    var pushPostLiveData = MutableLiveData<Response<Post>>()
+    var pushPostLiveData2 = MutableLiveData<Response<Post>>()
+
+
     suspend fun getPosts(){
         responseLiveData.value =  repository.getPosts()
+    }
+
+    fun pushPost(post: Post) = viewModelScope.launch{
+        pushPostLiveData.value = repository.pushPost(post)
+    }
+
+    fun pushPost2(userId: Int, id: Int, title:String, body: String) = viewModelScope.launch {
+        pushPostLiveData2.value = repository.pushPost2(userId, id, title, body)
     }
 }
