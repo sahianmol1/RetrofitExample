@@ -55,6 +55,7 @@ class PostsFragment : Fragment(), PostItemClickListener {
             }
             if (response.isSuccessful && response.body() != null) {
                 adapter.submitList(response.body())
+                Log.e(TAG, response.headers().toString())
             } else {
                 Log.e("PostsFragment", "Response not successful")
             }
@@ -90,11 +91,9 @@ class PostsFragment : Fragment(), PostItemClickListener {
                 Log.e(TAG, response.body()?.userId.toString())
                 Log.e(TAG, response.body()?.title.toString())
                 Log.e(TAG, response.body()?.body.toString())
-                Log.e(TAG, response.code().toString())
+                Log.e(TAG, response.headers().toString())
                 Log.e(TAG, "Message: ${response.message().toString()}")
             }
-
-
         })
 
 
